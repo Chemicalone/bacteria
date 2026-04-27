@@ -408,6 +408,16 @@
     </div>
     <div class="slider-val" id="fertVal">2</div>
   </div>
+  <div class="control-card slider-wrap" style="grid-column: 1 / -1;">
+    <div class="stat-label">Velocità</div>
+    <div class="slider-row">
+      <span class="slider-bound" style="width:3ch">🐢</span>
+      <input type="range" id="speedSlider" min="1" max="7" value="4"
+             oninput="updateSpeed(this.value)">
+      <span class="slider-bound" style="width:3ch">⚡</span>
+    </div>
+    <div class="slider-val" id="speedVal">500ms</div>
+  </div>
 </div>
 
 <div class="btn-row">
@@ -421,8 +431,20 @@ const N            = 50;
 const CELL         = 12;
 let   PESO_LIBERA  = 2;
 const PESO_OCCUP   = 1;
-const STEP_MS      = 500;
+let   STEP_MS      = 500;
 const FLASH_MS     = 170;
+
+/* Speed levels: 1=slowest … 7=fastest */
+const SPEED_LEVELS = [2000, 1000, 500, 250, 100, 40, 10];
+const SPEED_LABELS = ['2s', '1s', '500ms', '250ms', '100ms', '40ms', '10ms'];
+
+function updateSpeed(val) {
+  const idx = parseInt(val) - 1;
+  STEP_MS = SPEED_LEVELS[idx];
+  document.getElementById('speedVal').textContent = SPEED_LABELS[idx];
+  const pct = ((val - 1) / 6 * 100).toFixed(1);
+  document.getElementById('speedSlider').style.setProperty('--pct', pct + '%');
+}
 
 const dx = [-1, 1, 0, 0];
 const dy = [ 0, 0,-1, 1];
@@ -464,9 +486,10 @@ function updateFertility(val) {
   document.getElementById('fertSlider').style.setProperty('--pct', pct + '%');
 }
 
-/* Init slider fill on load */
+/* Init sliders fill on load */
 window.addEventListener('DOMContentLoaded', () => {
   updateFertility(document.getElementById('fertSlider').value);
+  updateSpeed(document.getElementById('speedSlider').value);
 });
 
 /* ───────────── DIRECTION ───────────── */
