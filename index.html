@@ -2,6 +2,7 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Bacterial Colony</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -25,13 +26,14 @@
     color: var(--text);
     font-family: 'JetBrains Mono', 'Courier New', monospace;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 20px;
-    padding: 24px;
+    gap: 14px;
+    padding: 16px 12px 24px;
     overflow-y: auto;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Subtle scanline texture */
@@ -59,14 +61,14 @@
   }
 
   .lab-label {
-    font-size: 0.55rem;
-    letter-spacing: 0.45em;
+    font-size: clamp(0.5rem, 2.2vw, 0.6rem);
+    letter-spacing: 0.3em;
     color: var(--accent-dim);
     text-transform: uppercase;
   }
 
   h1 {
-    font-size: 1.35rem;
+    font-size: clamp(1rem, 5vw, 1.35rem);
     font-weight: 700;
     color: var(--accent);
     letter-spacing: 0.25em;
@@ -81,9 +83,16 @@
       0 0 0 1px #00df8808,
       0 0 40px #00df8814,
       inset 0 0 60px #00000055;
+    /* Full width on mobile */
+    width: min(100%, 600px);
+    aspect-ratio: 1 / 1;
   }
 
-  canvas { display: block; }
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 
   /* vignette */
   .canvas-shell::after {
@@ -101,7 +110,7 @@
     position: absolute;
     top: 10px;
     right: 12px;
-    font-size: 0.55rem;
+    font-size: clamp(0.5rem, 2vw, 0.6rem);
     letter-spacing: 0.2em;
     color: var(--red);
     text-shadow: 0 0 8px var(--red-glow);
@@ -114,7 +123,7 @@
   }
   .rec.on { opacity: 1; }
   .rec-dot {
-    width: 6px; height: 6px;
+    width: 7px; height: 7px;
     border-radius: 50%;
     background: var(--red);
     box-shadow: 0 0 8px var(--red);
@@ -124,10 +133,10 @@
 
   /* ── Phase indicator ── */
   .phase {
-    font-size: 0.6rem;
-    letter-spacing: 0.25em;
+    font-size: clamp(0.6rem, 2.5vw, 0.7rem);
+    letter-spacing: 0.2em;
     text-transform: uppercase;
-    min-height: 1.1em;
+    min-height: 1.2em;
     text-align: center;
     transition: color 0.3s, text-shadow 0.3s;
   }
@@ -140,33 +149,37 @@
     text-shadow: 0 0 12px var(--accent-glow);
   }
 
-  /* ── Stats + Controls ── */
-  .bottom {
+  /* ── Stats row ── */
+  .stats-row {
     display: flex;
     align-items: center;
-    gap: 18px;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 0;
+    width: 100%;
+    max-width: 600px;
+    justify-content: space-around;
+    border: 1px solid var(--border);
+    padding: 10px 0;
   }
 
   .stat-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2px;
+    gap: 3px;
+    flex: 1;
   }
   .stat-label {
-    font-size: 0.5rem;
-    letter-spacing: 0.25em;
+    font-size: clamp(0.45rem, 2vw, 0.55rem);
+    letter-spacing: 0.2em;
     color: var(--text);
     text-transform: uppercase;
   }
   .stat-val {
-    font-size: 1.3rem;
+    font-size: clamp(1.2rem, 6vw, 1.6rem);
     font-weight: 700;
     color: var(--accent);
     text-shadow: 0 0 14px var(--accent-glow);
-    min-width: 4ch;
+    min-width: 3ch;
     text-align: center;
   }
 
@@ -174,13 +187,33 @@
     width: 1px;
     height: 36px;
     background: var(--border);
+    flex-shrink: 0;
   }
 
+  /* ── Controls grid ── */
+  .controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .control-card {
+    border: 1px solid var(--border);
+    padding: 12px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* ── Steps input ── */
   .input-wrap {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
   }
 
   input[type="number"] {
@@ -188,12 +221,15 @@
     border: 1px solid var(--border);
     color: var(--accent);
     font-family: inherit;
-    font-size: 0.85rem;
-    padding: 6px 10px;
-    width: 90px;
+    font-size: clamp(0.9rem, 4vw, 1.1rem);
+    padding: 10px 8px;
+    width: 100%;
+    max-width: 120px;
     text-align: center;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
+    /* Prevent zoom on iOS */
+    font-size: 16px;
   }
   input[type="number"]:focus {
     border-color: var(--accent);
@@ -205,45 +241,67 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    width: 100%;
   }
+
   .slider-row {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
   }
+
   .slider-bound {
-    font-size: 0.55rem;
+    font-size: clamp(0.55rem, 2vw, 0.65rem);
     color: var(--accent-dim);
     letter-spacing: 0.1em;
     width: 1.8ch;
     text-align: center;
+    flex-shrink: 0;
   }
+
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;
-    width: 120px;
-    height: 2px;
-    background: linear-gradient(to right, var(--accent) var(--pct, 14%), #0d2a1e var(--pct, 14%));
+    flex: 1;
+    height: 6px;
+    background: linear-gradient(to right, var(--accent) var(--pct, 11%), #0d2a1e var(--pct, 11%));
     outline: none;
     cursor: pointer;
-    border-radius: 0;
+    border-radius: 3px;
+    /* Large touch target via padding */
+    padding: 14px 0;
+    background-clip: content-box;
   }
+
   input[type="range"]::-webkit-slider-thumb {
     -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
+    width: 32px;
+    height: 32px;
     background: var(--accent);
-    box-shadow: 0 0 10px var(--accent-glow);
-    border-radius: 0;
+    box-shadow: 0 0 14px var(--accent-glow);
+    border-radius: 50%;
     cursor: pointer;
-    transition: box-shadow 0.2s;
+    transition: box-shadow 0.2s, transform 0.15s;
+    border: 2px solid #03070e;
   }
-  input[type="range"]:hover::-webkit-slider-thumb {
-    box-shadow: 0 0 18px var(--accent);
+  input[type="range"]::-moz-range-thumb {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    box-shadow: 0 0 14px var(--accent-glow);
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid #03070e;
   }
+  input[type="range"]:active::-webkit-slider-thumb {
+    box-shadow: 0 0 24px var(--accent);
+    transform: scale(1.15);
+  }
+
   .slider-val {
-    font-size: 1rem;
+    font-size: clamp(1.1rem, 5vw, 1.4rem);
     font-weight: 700;
     color: var(--accent);
     text-shadow: 0 0 12px var(--accent-glow);
@@ -251,17 +309,28 @@
     text-align: center;
   }
 
+  /* ── Buttons ── */
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    width: 100%;
+    max-width: 600px;
+  }
+
   button {
     background: transparent;
     border: 1px solid currentColor;
     color: var(--accent);
     font-family: inherit;
-    font-size: 0.65rem;
-    letter-spacing: 0.25em;
-    padding: 9px 20px;
+    font-size: clamp(0.7rem, 3vw, 0.85rem);
+    letter-spacing: 0.2em;
+    padding: 16px 10px;
     cursor: pointer;
     text-transform: uppercase;
     transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    touch-action: manipulation;
+    min-height: 52px;
   }
   button:hover {
     background: #00df8812;
@@ -275,6 +344,21 @@
   button.stop-btn:hover {
     background: #ff2f5512;
     box-shadow: 0 0 16px var(--red-glow);
+  }
+
+  /* ── Desktop layout override ── */
+  @media (min-width: 640px) {
+    body { justify-content: center; padding: 24px; }
+
+    .controls {
+      grid-template-columns: auto auto;
+      width: auto;
+    }
+
+    .btn-row {
+      width: auto;
+      min-width: 300px;
+    }
   }
 </style>
 </head>
@@ -292,14 +376,14 @@
 
 <div class="phase" id="phase"></div>
 
-<div class="bottom">
+<div class="stats-row">
   <div class="stat-box">
     <div class="stat-label">Generazione</div>
     <div class="stat-val" id="gen">0</div>
   </div>
   <div class="sep"></div>
   <div class="stat-box">
-    <div class="stat-label">Batteri vivi</div>
+    <div class="stat-label">Vivi</div>
     <div class="stat-val" id="cnt">1</div>
   </div>
   <div class="sep"></div>
@@ -307,13 +391,14 @@
     <div class="stat-label">Morti</div>
     <div class="stat-val" id="dead" style="color: var(--red); text-shadow: 0 0 14px var(--red-glow);">0</div>
   </div>
-  <div class="sep"></div>
-  <div class="input-wrap">
+</div>
+
+<div class="controls">
+  <div class="control-card input-wrap">
     <div class="stat-label">Passi</div>
-    <input type="number" id="stepsInput" value="200" min="1" max="9999">
+    <input type="number" id="stepsInput" value="200" min="1" max="9999" inputmode="numeric">
   </div>
-  <div class="sep"></div>
-  <div class="slider-wrap">
+  <div class="control-card slider-wrap">
     <div class="stat-label">Fertilità</div>
     <div class="slider-row">
       <span class="slider-bound">1</span>
@@ -323,7 +408,9 @@
     </div>
     <div class="slider-val" id="fertVal">2</div>
   </div>
-  <div class="sep"></div>
+</div>
+
+<div class="btn-row">
   <button id="mainBtn" onclick="toggleSim()">AVVIA</button>
   <button class="stop-btn" onclick="resetSim()">RESET</button>
 </div>
@@ -373,10 +460,14 @@ function init() {
 function updateFertility(val) {
   PESO_LIBERA = parseInt(val);
   document.getElementById('fertVal').textContent = val;
-  /* Update slider gradient fill */
   const pct = ((val - 1) / 9 * 100).toFixed(1);
   document.getElementById('fertSlider').style.setProperty('--pct', pct + '%');
 }
+
+/* Init slider fill on load */
+window.addEventListener('DOMContentLoaded', () => {
+  updateFertility(document.getElementById('fertSlider').value);
+});
 
 /* ───────────── DIRECTION ───────────── */
 function pickDir(x, y) {
@@ -401,10 +492,8 @@ function doStep() {
     return;
   }
 
-  /* Every bacterium picks a direction */
   const dirs = bacteria.map(b => pickDir(b.x, b.y));
 
-  /* PHASE 1 – compute deaths */
   const morira = Array.from({length: N}, () => new Uint8Array(N));
   let deathCount = 0;
   for (let i = 0; i < bacteria.length; i++) {
@@ -416,14 +505,12 @@ function doStep() {
     }
   }
 
-  /* Flash dying bacteria in red */
   if (deathCount > 0) {
     setPhase('LISI CELLULARE  —  ' + deathCount + ' ELIMINATI', 'dying');
     drawGrid(morira, null);
   }
 
   setTimeout(() => {
-    /* PHASE 2 – apply deaths */
     const newborn = Array.from({length: N}, () => new Uint8Array(N));
     const next = [];
 
@@ -436,7 +523,6 @@ function doStep() {
       }
     }
 
-    /* PHASE 3 – survivors expand */
     const added = Array.from({length: N}, () => new Uint8Array(N));
     let birthCount = 0;
     for (let i = 0; i < bacteria.length; i++) {
@@ -474,11 +560,9 @@ function doStep() {
 
 /* ───────────── DRAW ───────────── */
 function drawGrid(dying, newborn) {
-  /* Background */
   ctx.fillStyle = '#03070e';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  /* Subtle checker-dot grid */
   ctx.fillStyle = '#0b1a22';
   for (let i = 0; i < N; i++)
     for (let j = 0; j < N; j++)
@@ -493,7 +577,6 @@ function drawGrid(dying, newborn) {
       const cy = i * CELL + CELL / 2;
 
       if (dying && dying[i][j]) {
-        /* ── Dying: red burst ── */
         ctx.save();
         ctx.shadowBlur  = 22;
         ctx.shadowColor = '#ff2f55';
@@ -501,7 +584,6 @@ function drawGrid(dying, newborn) {
         ctx.beginPath();
         ctx.arc(cx, cy, r * 1.2, 0, Math.PI * 2);
         ctx.fill();
-        /* Inner white-hot core */
         ctx.shadowBlur  = 6;
         ctx.shadowColor = '#ffaaaa';
         ctx.fillStyle   = '#ffcccc';
@@ -515,14 +597,12 @@ function drawGrid(dying, newborn) {
         ctx.save();
 
         if (isNew) {
-          /* ── Newborn: bright white-green flash ── */
           ctx.shadowBlur  = 26;
           ctx.shadowColor = '#aaffd0';
           ctx.fillStyle   = '#ddfff0';
           ctx.beginPath();
           ctx.arc(cx, cy, r * 1.2, 0, Math.PI * 2);
           ctx.fill();
-          /* Soft halo ring */
           ctx.globalAlpha = 0.25;
           ctx.shadowBlur  = 14;
           ctx.shadowColor = '#00ffaa';
@@ -533,14 +613,12 @@ function drawGrid(dying, newborn) {
           ctx.stroke();
           ctx.globalAlpha = 1;
         } else {
-          /* ── Normal bacterium: bioluminescent green ── */
           ctx.shadowBlur  = 14;
           ctx.shadowColor = '#00c870';
           ctx.fillStyle   = '#00a85a';
           ctx.beginPath();
           ctx.arc(cx, cy, r, 0, Math.PI * 2);
           ctx.fill();
-          /* Specular highlight */
           ctx.shadowBlur = 0;
           const grad = ctx.createRadialGradient(
             cx - r*0.25, cy - r*0.3, 0,
